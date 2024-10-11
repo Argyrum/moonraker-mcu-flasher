@@ -55,7 +55,7 @@ class Mcu:
         self.server = config.get_server()
         self.name: str = name
         self.klipper_path = config.get('make_path', klipper_path)
-        self.kconfig: str = config.get('kconfig')
+        self.kconfig: str = config.get('kconfig', '')
         self.flash_cmd: str = config.get('flash_cmd')
         self.silent: bool = config.get('silent', False)
 
@@ -93,7 +93,17 @@ class Mcu:
         self._log(f"<<<<<<<<<<<<<<< {self.name}: start flashing... >>>>>>>>>>>>>>")
         try:
             kconfig_filename = os.path.join(self.klipper_path, ".config")
-            self._make_kconfig(kconfig_filename)
+            if self.kconfig is not '':
+                self._make_kconfig(kconfig_filename)
+            else:
+                if not os.path.exists(kconfig_filename):
+                    logging.exception(f"No .config file exists at '{kconfig_filename}'")
+                    logging.info(f"Run make menuconfig or manually especify kconfig")
+                    self._log(f"No .config file exists at '{kconfig_filename}'\n", '!!')
+                    raise ShellCommandError("No .config found")
+                else:
+                    logging.info(f"using existing .config file for {self.name} at '{kconfig_filename}'")
+                    logging.info(f"remember this is only valid when compiling a single mcu model in this directory")
             make_cmd = f"make KCONFIG_CONFIG={kconfig_filename}"
             logging.info(f"mcu_flasher: Compile firmware for '{self.name}'...")
             await self._run_cmd(f"{make_cmd} olddefconfig")

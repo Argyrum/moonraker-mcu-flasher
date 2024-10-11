@@ -37,6 +37,7 @@ In your `moonraker.conf` file, add a section for each MCU you want to flash. Her
 make_path: # Absolute path to the firmware folder to compile. If ommited defaults to the klipper directory.
 kconfig: 
   # Contains the `menuconfig` options for this mcu.
+  # If ommited the .config present in the firmware directory will be used (Only valid when compiling for a single model of mcu).
 flash_cmd:
   # Command to flash the MCU (see below for details).
 silent: True  # Enable to suppress all standard output messages.
