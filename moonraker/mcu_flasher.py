@@ -44,10 +44,10 @@ class McuFlasher:
         mcu = mcu.lower()
         ks = self.mcus.keys() if mcu == "all" else [mcu]
         machine: Machine = self.server.lookup_component("machine")
-        await machine.do_service_action("stop", "klipper")
+        #await machine.do_service_action("stop", "klipper")
         for m in ks:
             await self.mcus[m].flash()
-        await machine.do_service_action("start", "klipper")
+        #await machine.do_service_action("start", "klipper")
         await self.klippy_api.do_restart("FIRMWARE_RESTART")
 
 class Mcu:
